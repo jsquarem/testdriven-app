@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask  # new
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+# new
 def create_app(script_info=None):
 
     # instantiate the app
