@@ -3,7 +3,8 @@ from flask import Flask, jsonify
 from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 
-# instatiate the app
+
+# instantiate the app
 app = Flask(__name__)
 
 api = Api(app)
@@ -15,10 +16,11 @@ app.config.from_object(app_settings)
 # instantiate the db
 db = SQLAlchemy(app)
 
+
 # model
-class User(db.model):
+class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, autoinrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), nullable=False)
     active = db.Column(db.Boolean(), default=True, nullable=False)
@@ -27,11 +29,13 @@ class User(db.model):
         self.username = username
         self.email = email
 
+
 class UsersPing(Resource):
     def get(self):
         return {
-            'status': 'success',
-            'message': 'pong!'
-        }
-    
+        'status': 'success',
+        'message': 'pong!'
+    }
+
+
 api.add_resource(UsersPing, '/users/ping')
