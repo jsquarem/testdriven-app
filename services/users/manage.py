@@ -16,7 +16,6 @@ def recreate_db():
     db.create_all()
     db.session.commit()
 
-
 @cli.command()
 def test():
     """Runs the tests without code coverage"""
@@ -25,6 +24,13 @@ def test():
     if result.wasSuccessful():
         return 0
     sys.exit(result)
+
+@cli.command('seed_db')
+def seed_db():
+    """Seeds the database."""
+    db.session.add(User(username='jmartin', email="jeffjmart@gmail.com"))
+    db.session.add(User(username='jsquarem', email="jsquarem@clickapea.com"))
+    db.session.commit()
 
 
 if __name__ == '__main__':

@@ -16,6 +16,7 @@ class UsersPing(Resource):
     }
 
 class UsersList(Resource):
+    
     def post(self):
         post_data = request.get_json()
         response_object = {
@@ -40,8 +41,19 @@ class UsersList(Resource):
         except exc.IntegrityError:
             db.session.rollback()
             return response_object, 400
+    
+    def get(self):
+      """Get all users"""
+      response_object = {
+          'status': 'success',
+          'data': {
+              'users': [user.to_json() for user in User.query.all()]
+          }
+      }
+      return response_object, 200
         
 class Users(Resource):
+    
     def get(self, user_id):
         """Get single user details"""
         response_object = {

@@ -4,7 +4,18 @@ import unittest
 from project import db
 from project.api.models import User
 from project.tests.base import BaseTestCase
+"""
+Helper Functions
+"""
+def add_user(username, email):
+    user = User(username=username, email=email)
+    db.session.add(user)
+    db.session.commit()
+    return user
 
+"""
+Test Classes
+"""
 class TestUserService(BaseTestCase):
     """Tests for the Users Service"""
 
@@ -87,15 +98,13 @@ class TestUserService(BaseTestCase):
 
     def test_single_user(self):
       """Ensure get single user behaves correctly."""
-      user = User(username='michael', email='michael@mherman.org')
-      db.session.add(user)
-      db.session.commit()
+      user = add_user('jmartin', 'jeffjmart@gmail.com')
       with self.client:
           response = self.client.get(f'/users/{user.id}')
           data = json.loads(response.data.decode())
           self.assertEqual(response.status_code, 200)
-          self.assertIn('michael', data['data']['username'])
-          self.assertIn('michael@mherman.org', data['data']['email'])
+          self.assertIn('jmartin', data['data']['username'])
+          self.assertIn('jeffjmart@gmail.com', data['data']['email'])
           self.assertIn('success', data['status'])
 
     def test_single_user_no_id(self):
@@ -115,6 +124,23 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
+
+    def test_all_users(self):
+      """Ensure get all users behaves correctly."""
+      add_user('jmartin', 'jeffjmart@gmail.com')
+      add_user('fletcher', 'fletcher@notreal.com')
+      with self.client:
+          response = self.client.get('/users')
+          data = json.loads(response.data.decode())
+          self.assertEqual(response.status_code, 200)
+          self.assertEqual(len(data['data']['users']), 2)
+          self.assertIn('jmartin', data['data']['users'][0]['username'])
+          self.assertIn(
+              'jeffjmart@gmail.com', data['data']['users'][0]['email'])
+          self.assertIn('fletcher', data['data']['users'][1]['username'])
+          self.assertIn(
+              'fletcher@notreal.com', data['data']['users'][1]['email'])
+          self.assertIn('success', data['status'])
 
 if __name__ == '__main__':
     unittest.main()
